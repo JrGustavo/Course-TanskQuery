@@ -1,46 +1,30 @@
+import { useRandom } from './hooks/useRandom';
 
-import './App.css'
-import {useEffect, useState} from "react";
-
-
+import '/App.css'
 
 function App() {
+    const { randomQuery } = useRandom();
 
-    const [number, setNumber] = useState(0)
-    const  [isLoading, setIsLoading] = useState(true);
-    const [refreshtoken, setRefreshtoken] = useState(0)
-    const [error, setError] = useState(0)
-
-
-    useEffect(() => {
-
-        setIsLoading(true)
-
-        fetch('https://www.random.org/integers/?num=1&min=1&max=500&col=1&base=10&format=plain&rnd=new')
-
-            .then((resp) => resp.json())
-            .then((data) => setNumber(data))
-            .catch((error) => setError(error))
-            .finally(() => setIsLoading(false))
-    }, [refreshtoken])
-  return (
-    <>
-        {
-            isLoading
-            ? (
-                <h2>Cargando...</h2>
+    return (
+        <>
+            {randomQuery.isFetching ? (
+                <h1>Cargando</h1>
             ) : (
-                <h2>Número aleatorio: {number}</h2>
-            )
-        }
-        <div>{error}</div>
-        <button
-            disabled={isLoading}
-            onClick={() => setRefreshtoken(refreshtoken + 1)}>
-            Nuevo número
-        </button>
-    </>
-  )
+                <h1>Número: {randomQuery.data}</h1>
+            )}
+
+            {/* <RandomNumber /> */}
+
+            <div>{JSON.stringify(randomQuery.error)}</div>
+
+            <button
+                disabled={randomQuery.isFetching}
+                onClick={() => randomQuery.refetch()}
+            >
+                Nuevo número
+            </button>
+        </>
+    );
 }
 
-export default App
+export default App;
